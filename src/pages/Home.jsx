@@ -30,8 +30,11 @@ function Home() {
 
   const imageStyle = {
     width: '200px',  // Adjust size as needed
-    height: 'auto',
-    marginBottom: '20px'
+    height: 'auto', 
+    marginBottom: '20px',
+    backgroundColor: 'white',
+    borderRadius: '100%',
+    padding: '5%',
   };
 
   return (
