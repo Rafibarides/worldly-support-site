@@ -5,6 +5,10 @@ import { useEffect, useState } from 'react';
 import charImage from '../assets/char.png';
 import cloudImage from '../assets/cloud.png';
 import worldImage from '../assets/world.png';
+import storesImage from '../assets/stores.png';
+import medalImage from '../assets/medal.png';
+import logsImage from '../assets/logs.png';
+import phoneImage from '../assets/phone.png';
 import { FaGlobeAmericas, FaAward, FaUserFriends } from 'react-icons/fa';
 
 function Home() {
@@ -37,11 +41,56 @@ function Home() {
   // Add rotation transformation for the world image: rotates from 0 to 5 degrees as the user scrolls
   const worldRotation = useTransform(scrollY, [0, 1000], [0, 24]);
 
+  // NEW: Define parallax values for the overlapping sections.
+  // At scroll 0, left y = 0 and right y = 30; at scroll 1000, left y = 30 and right y = 60.
+  const leftParallax = useTransform(scrollY, [0, 1000], [0, 40]);
+  const rightParallax = useTransform(scrollY, [0, 1000], [30, 80]);
+
   const navItems = [
     { label: 'About', path: '/about' },
     { label: 'Support', path: '/support' },
     { label: 'Privacy Policy', path: '/privacy-policy' },
   ];
+
+  // White cards data for the dynamic grid
+  const whiteCards = [
+    { id: 1, text: 'Explore the world', icon: <FaGlobeAmericas size={24} color="#f6ca5f" /> },
+    { id: 2, text: 'Earn rewards', icon: <FaAward size={24} color="#f6ca5f" /> },
+    { id: 3, text: 'Connect with friends', icon: <FaUserFriends size={24} color="#f6ca5f" /> },
+    { id: 4, text: 'Adventure awaits', icon: <FaGlobeAmericas size={24} color="#f6ca5f" /> },
+  ];
+
+  // WhiteCard component for individual cards
+  const WhiteCard = ({ icon, text }) => {
+    const cardStyle = {
+      backgroundColor: 'white',
+      borderRadius: '10px',
+      boxShadow: '0px 1px 3px rgba(0,0,0,0.09)',
+      height: '70px',
+      width: '200px',
+      display: 'flex',
+      alignItems: 'center',
+      paddingLeft: '10px',
+      fontFamily: 'Quicksand',
+      fontSize: '14px',
+      color: '#7ebd64',
+      fontWeight: '800',
+    };
+    const iconContainerStyle = {
+      marginRight: '10px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    };
+    return (
+      <div style={cardStyle}>
+        <div style={iconContainerStyle}>
+          {icon}
+        </div>
+        <span>{text}</span>
+      </div>
+    );
+  };
 
   // Nav button style now uses a fixed font size in pixels.
   const navButtonStyle = (path) => ({
@@ -84,21 +133,109 @@ function Home() {
     marginTop: '0',
   };
 
-  // Overlapping section styling is now in fixed pixels.
-  const overlappingSectionStyle = {
+  // New overlapping sections wrapper style
+  const overlappingSectionWrapperStyle = {
     position: 'absolute',
     top: `${BASE_HEIGHT_GREEN}px`,  // 800px – the bottom edge of the green section
-    left: '50%',                   
-    transform: 'translate(-50%, -25%)', 
-    width: `${Math.round(0.6 * BASE_WIDTH)}px`,  
-    height: `${OVERLAP_HEIGHT}px`,  // 200px
+    left: '50%',
+    transform: 'translate(-50%, -25%)',
+    width: `${Math.round(0.6 * BASE_WIDTH)}px`,
+    display: 'flex',
+    alignItems: 'stretch',
     zIndex: 10,
-    backgroundColor: 'white', // adjust as needed
-    padding: '20px',
+  };
+
+  // Left overlapping section: world image and text.
+  const leftOverlappingSectionStyle = {
+    backgroundColor: 'white',
+    padding: '30px',               // increased padding for better spacing
     textAlign: 'center',
     borderRadius: '50px',
-    boxShadow: '0px 10px 15px rgba(0, 0, 0, 0.09)', // added shadow
+    boxShadow: '0px 10px 15px rgba(0, 0, 0, 0.09)',
+    width: '40%',
+    height: `${OVERLAP_HEIGHT}px`,
+    position: 'relative',
+    zIndex: 20,
+    margin: '0',                   // removed negative margin
+    display: 'flex',              // use flex centering for inner content
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
   };
+
+  // Right overlapping section: the cards.
+  const rightOverlappingSectionStyle = {
+    backgroundColor: '#7ebd64',
+    padding: '30px',              // increased padding for consistency
+    textAlign: 'center',
+    borderRadius: '0 50px 50px 0',
+    boxShadow: '0px 0px 20px rgba(0, 0, 0, 0.1)',
+    width: '60%',
+    height: `${OVERLAP_HEIGHT * 0.8}px`,
+    position: 'relative',
+    zIndex: 10,
+    marginTop: '0',              // removed extra top margin
+    display: 'flex',             // center its content
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
+
+  // --- New: Framer Motion Variants ---
+  const whiteCardContainerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+      },
+    },
+  };
+
+  const whiteCardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: 'spring', stiffness: 100, damping: 12 },
+    },
+  };
+
+  const overlappingCardContainerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.25 },
+    },
+  };
+
+  const overlappingCardVariants = {
+    hidden: { opacity: 0, x: -30 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { type: 'spring', stiffness: 100, damping: 10 },
+    },
+  };
+  // --- End New Variants ---
+
+  // Insert New: Green Section Variants
+  const greenContainerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.3,  // time between each child animating
+        delayChildren: 0.2,    // delay before the first child animates
+      },
+    },
+  };
+
+  const greenItemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  };
+  // --- End Green Section Variants ---
 
   return (
     // Outer wrapper to center the scaled design
@@ -236,7 +373,7 @@ function Home() {
           <div
             style={{
               backgroundColor: 'white',
-              width: `${BASE_WIDTH}px`,
+              width: '100%',                       // span the entire screen width
               height: `${BASE_HEIGHT_WHITE}px`,
               position: 'relative',
               overflow: 'hidden',
@@ -244,103 +381,185 @@ function Home() {
           >
             <div
               style={{
-                width: '960px',
+                width: `calc(${BASE_WIDTH}px - 80px)`,
                 margin: '0 auto',
-                textAlign: 'center',
-                paddingTop: '320px', // fixed padding (e.g. 40% of 800px)
-                color: '#7ebd64',
-                fontFamily: 'Quicksand',
-                fontSize: '40px',
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',  // center children horizontally
+                alignItems: 'center',
+                gap: '80px',               // add a gap between the two children
+                height: `${BASE_HEIGHT_WHITE}px`,
               }}
             >
-              White Section
+              {/* Left side: dynamic 2x2 grid of cards */}
+              <motion.div
+                as={motion.div}
+                variants={whiteCardContainerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                style={{
+                  width: '580px',
+                  display: 'grid',
+                  gridTemplateColumns: '260px 260px',
+                  columnGap: '10px',
+                  rowGap: '40px',
+                  padding: '20px',
+                  boxSizing: 'border-box',
+                  marginTop: '100px',
+                  marginLeft: '60px',
+                }}
+              >
+                {whiteCards.map(card => (
+                  <motion.div 
+                    key={card.id}
+                    variants={whiteCardVariants}
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <WhiteCard icon={card.icon} text={card.text} />
+                  </motion.div>
+                ))}
+              </motion.div>
+
+              {/* Right side: Phone image */}
+              <div style={{ 
+                width: '500px', 
+                height: '800px', 
+                position: 'relative'
+              }}>
+                <img 
+                  src={phoneImage} 
+                  alt="Phone" 
+                  style={{ 
+                    position: 'absolute', 
+                    bottom: '0px', 
+                    right: '0px', 
+                    width: '360px', 
+                    height: 'auto',
+                    paddingRight: '60px'
+                  }}
+                />
+              </div>
             </div>
           </div>
 
-          {/* Overlapping Section */}
-          <div style={overlappingSectionStyle}>
-            <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', height: '100%' }}>
-              {/* Left: World image with "play on mobile" text */}
-              <div style={{ textAlign: 'center' }}>
-                <motion.img 
-                  src={worldImage} 
-                  alt="World" 
-                  style={{ width: '200px', marginBottom: '8px', rotate: worldRotation }} 
-                />
-                <p style={{ fontSize: '12px', color: '#333', margin: 0 }}>
-                  PLAY ON<br />MOBILE
-                </p>
-              </div>
+          {/* Overlapping Sections Wrapper */}
+          <div style={overlappingSectionWrapperStyle}>
+            {/* Left Overlapping Section: World image and play on mobile */}
+            <motion.div style={{ ...leftOverlappingSectionStyle, y: leftParallax }}>
+              <motion.img 
+                src={worldImage} 
+                alt="World" 
+                style={{ width: '200px', marginBottom: '8px', rotate: worldRotation }} 
+              />
+              <p style={{ fontSize: '12px', color: '#333', margin: 0, fontWeight: 'bold' }}>
+                Play on mobile
+              </p>
+              <img 
+                src={storesImage}
+                alt="Stores"
+                style={{ width: '200px', marginTop: '8px' }} 
+              />
+            </motion.div>
 
-              {/* Right: 3 stacked text cards */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {/* Right Overlapping Section: 3 stacked cards */}
+            <motion.div style={{ ...rightOverlappingSectionStyle, y: rightParallax }}>
+              <motion.div
+                variants={overlappingCardContainerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '10px',
+                  height: '100%',
+                  justifyContent: 'center',
+                  paddingLeft: '50px',  // shift cards to the right
+                }}
+              >
                 {/* Card 1 */}
-                <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+                <motion.div
+                  variants={overlappingCardVariants}
+                  whileHover={{ scale: 1.05 }}
+                  style={{ display: 'flex', alignItems: 'flex-start' }}
+                >
                   <div style={{
-                    width: '50px',      // increased size
-                    height: '50px',     // increased size
+                    width: '50px',
+                    height: '50px',
                     borderRadius: '50%',
-                    backgroundColor: '#7ebd64',
+                    backgroundColor: 'white',
+                    padding: '6px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    marginRight: '12px' // increased margin
+                    marginRight: '12px'
                   }}>
-                    <FaGlobeAmericas color="white" size={24} /> 
+                    <FaGlobeAmericas size={24} color="#f6ca5f" />
                   </div>
                   <div style={{ textAlign: 'left' }}>
-                    <h4 style={{ margin: '0', fontSize: '18px', color: '#000' }}>Learn countries</h4>
-                    <p style={{ margin: '4px 0 0 0', fontSize: '14px', lineHeight: '1.2', color: '#000' }}>
+                    <h4 style={{ margin: '0', fontSize: '18px', color: '#fff' }}>Learn countries</h4>
+                    <p style={{ margin: '4px 0 0 0', fontSize: '14px', lineHeight: '1.2', color: '#fff' }}>
                       Explore and discover<br />facts about the world.
                     </p>
                   </div>
-                </div>
-
+                </motion.div>
+                
                 {/* Card 2 */}
-                <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+                <motion.div
+                  variants={overlappingCardVariants}
+                  whileHover={{ scale: 1.05 }}
+                  style={{ display: 'flex', alignItems: 'flex-start' }}
+                >
                   <div style={{
                     width: '50px',
                     height: '50px',
                     borderRadius: '50%',
-                    backgroundColor: '#7ebd64',
+                    backgroundColor: 'white',
+                    padding: '6px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     marginRight: '12px'
                   }}>
-                    <FaAward color="white" size={24} />
+                    <FaAward size={24} color="#f6ca5f" />
                   </div>
                   <div style={{ textAlign: 'left' }}>
-                    <h4 style={{ margin: '0', fontSize: '18px', color: '#000' }}>earn badges</h4>
-                    <p style={{ margin: '4px 0 0 0', fontSize: '14px', lineHeight: '1.2', color: '#000' }}>
+                    <h4 style={{ margin: '0', fontSize: '18px', color: '#fff' }}>earn badges</h4>
+                    <p style={{ margin: '4px 0 0 0', fontSize: '14px', lineHeight: '1.2', color: '#fff' }}>
                       Collect badges as you<br />master country trivia.
                     </p>
                   </div>
-                </div>
-
+                </motion.div>
+                
                 {/* Card 3 */}
-                <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+                <motion.div
+                  variants={overlappingCardVariants}
+                  whileHover={{ scale: 1.05 }}
+                  style={{ display: 'flex', alignItems: 'flex-start' }}
+                >
                   <div style={{
                     width: '50px',
                     height: '50px',
                     borderRadius: '50%',
-                    backgroundColor: '#7ebd64',
+                    backgroundColor: 'white',
+                    padding: '6px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     marginRight: '12px'
                   }}>
-                    <FaUserFriends color="white" size={24} />
+                    <FaUserFriends size={24} color="#f6ca5f" />
                   </div>
                   <div style={{ textAlign: 'left' }}>
-                    <h4 style={{ margin: '0', fontSize: '18px', color: '#000' }}>challenge your freinds</h4>
-                    <p style={{ margin: '4px 0 0 0', fontSize: '14px', lineHeight: '1.2', color: '#000' }}>
+                    <h4 style={{ margin: '0', fontSize: '18px', color: '#fff' }}>challenge your freinds</h4>
+                    <p style={{ margin: '4px 0 0 0', fontSize: '14px', lineHeight: '1.2', color: '#fff' }}>
                       Invite friends to play and<br />compare high scores.
                     </p>
                   </div>
-                </div>
-              </div>
-            </div>
+                </motion.div>
+              </motion.div>
+            </motion.div>
           </div>
         </div>
       </div>
