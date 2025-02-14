@@ -238,9 +238,331 @@ function Home() {
   // --- End Green Section Variants ---
 
   return (
-    <div>
-      <h1>Home Debug</h1>
-      <p>If you see this text, Home is mounting correctly.</p>
+    // Outer wrapper to center the scaled design
+    <div style={{ overflow: 'hidden', display: 'flex', justifyContent: 'center' }}>
+      {/* This wrapper's dimensions match the scaled design */}
+      <div
+        style={{
+          width: `${BASE_WIDTH * scale}px`,
+          height: `${FULL_HEIGHT * scale}px`,
+          position: 'relative',
+        }}
+      >
+        {/* Scaling Container: fixed-size design scaled with transform */}
+        <div
+          style={{
+            width: `${BASE_WIDTH}px`,
+            height: `${FULL_HEIGHT}px`,
+            transform: `scale(${scale})`,
+            transformOrigin: 'top left',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+          }}
+        >
+          {/* Green Section */}
+          <div
+            style={{
+              backgroundColor: '#7ebd64',
+              width: `${BASE_WIDTH}px`,
+              height: `${BASE_HEIGHT_GREEN + EXTRA_GREEN}px`, // extended height for extra background
+              position: 'relative',
+              overflow: 'hidden',
+            }}
+          >
+            {/* Absolutely positioned inner container to keep content unchanged */}
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: `${BASE_HEIGHT_GREEN}px`, // original content area remains 800px tall
+                paddingTop: '30px', // preserve original top padding
+              }}
+            >
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                style={{
+                  position: 'relative',
+                  width: '960px', // 80% of BASE_WIDTH
+                  margin: '0 auto',
+                  color: 'white',
+                  height: '100%',
+                }}
+              >
+                {/* Main content */}
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                  {/* Top navigation */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      gap: '20px',
+                      marginBottom: '80px', // fixed margin in pixels
+                    }}
+                  >
+                    {navItems.map((item) => (
+                      <motion.button
+                        key={item.path}
+                        style={navButtonStyle(item.path)}
+                        onClick={() => navigate(item.path)}
+                        whileHover={{ opacity: 1 }}  // on hover, set opacity to 100%
+                        transition={{ duration: 0.3 }} // smooth transition
+                      >
+                        {item.label}
+                      </motion.button>
+                    ))}
+                  </div>
+
+                  {/* Main content: left text and right image container */}
+                  <div style={contentContainerStyle}>
+                    {/* Left section with texts and download button */}
+                    <div style={{ flex: 1, textAlign: 'left', paddingRight: '20px' }}>
+                      <p style={{ margin: 0, fontSize: '14px', opacity: 0.9 }}>
+                        Welcome to the world
+                      </p>
+                      <h1 style={{ margin: '8px 0', fontSize: '60px', lineHeight: '1.2' }}>
+                        Let&apos;s play<br />Worldly
+                      </h1>
+                      <p style={{ margin: '10px 0', fontSize: '16px', lineHeight: '1.5' }}>
+                        Embark on an unforgettable adventure where every moment unveils
+                        exciting challenges and mesmerizing wonders.
+                      </p>
+                      <motion.button
+                        style={downloadButtonStyle}
+                        whileHover={{
+                          y: 4, // moves button down by 4px
+                          boxShadow: '0px 0px 0px rgba(211, 211, 211, 1)', // removes the shadow
+                        }}
+                        transition={{ type: 'spring', stiffness: 350, damping: 15 }}
+                      >
+                        Download
+                      </motion.button>
+                    </div>
+
+                    {/* Right section with character and cloud images */}
+                    <div style={{ flex: 1, position: 'relative', textAlign: 'right' }}>
+                      <motion.img
+                        src={cloudImage}
+                        alt="Cloud"
+                        style={{
+                          position: 'absolute',
+                          top: '160px',    // 20% of 800px
+                          right: '-10px', // roughly 10% of BASE_WIDTH
+                          width: '230px',  // fixed width in pixels
+                          zIndex: 0,
+                          y: cloudY,      // apply the parallax vertical movement
+                        }}
+                      />
+                      <img
+                        src={charImage}
+                        alt="Character"
+                        style={{ ...imageStyle, position: 'relative', zIndex: 1, right: '-100px' }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+
+          {/* White Section */}
+          <div
+            style={{
+              backgroundColor: 'white',
+              width: '100%',                       // span the entire screen width
+              height: `${BASE_HEIGHT_WHITE}px`,
+              position: 'relative',
+              overflow: 'hidden',
+            }}
+          >
+            <div
+              style={{
+                width: `calc(${BASE_WIDTH}px - 80px)`,
+                margin: '0 auto',
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',  // center children horizontally
+                alignItems: 'center',
+                gap: '80px',               // add a gap between the two children
+                height: `${BASE_HEIGHT_WHITE}px`,
+              }}
+            >
+              {/* Left side: dynamic 2x2 grid of cards */}
+              <motion.div
+                as={motion.div}
+                variants={whiteCardContainerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                style={{
+                  width: '580px',
+                  display: 'grid',
+                  gridTemplateColumns: '260px 260px',
+                  columnGap: '10px',
+                  rowGap: '40px',
+                  padding: '20px',
+                  boxSizing: 'border-box',
+                  marginTop: '100px',
+                  marginLeft: '60px',
+                }}
+              >
+                {whiteCards.map(card => (
+                  <motion.div 
+                    key={card.id}
+                    variants={whiteCardVariants}
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <WhiteCard icon={card.icon} text={card.text} />
+                  </motion.div>
+                ))}
+              </motion.div>
+
+              {/* Right side: Phone image */}
+              <div style={{ 
+                width: '500px', 
+                height: '800px', 
+                position: 'relative'
+              }}>
+                <img 
+                  src={phoneImage} 
+                  alt="Phone" 
+                  style={{ 
+                    position: 'absolute', 
+                    bottom: '0px', 
+                    right: '0px', 
+                    width: '360px', 
+                    height: 'auto',
+                    paddingRight: '60px'
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Overlapping Sections Wrapper */}
+          <div style={overlappingSectionWrapperStyle}>
+            {/* Left Overlapping Section: World image and play on mobile */}
+            <motion.div style={{ ...leftOverlappingSectionStyle, y: leftParallax }}>
+              <motion.img 
+                src={worldImage} 
+                alt="World" 
+                style={{ width: '200px', marginBottom: '8px', rotate: worldRotation }} 
+              />
+              <p style={{ fontSize: '12px', color: '#333', margin: 0, fontWeight: 'bold' }}>
+                Play on mobile
+              </p>
+              <img 
+                src={storesImage}
+                alt="Stores"
+                style={{ width: '200px', marginTop: '8px' }} 
+              />
+            </motion.div>
+
+            {/* Right Overlapping Section: 3 stacked cards */}
+            <motion.div style={{ ...rightOverlappingSectionStyle, y: rightParallax }}>
+              <motion.div
+                variants={overlappingCardContainerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '10px',
+                  height: '100%',
+                  justifyContent: 'center',
+                  paddingLeft: '50px',  // shift cards to the right
+                }}
+              >
+                {/* Card 1 */}
+                <motion.div
+                  variants={overlappingCardVariants}
+                  whileHover={{ scale: 1.05 }}
+                  style={{ display: 'flex', alignItems: 'flex-start' }}
+                >
+                  <div style={{
+                    width: '50px',
+                    height: '50px',
+                    borderRadius: '50%',
+                    backgroundColor: 'white',
+                    padding: '6px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginRight: '12px'
+                  }}>
+                    <FaGlobeAmericas size={24} color="#f6ca5f" />
+                  </div>
+                  <div style={{ textAlign: 'left' }}>
+                    <h4 style={{ margin: '0', fontSize: '18px', color: '#fff' }}>Learn countries</h4>
+                    <p style={{ margin: '4px 0 0 0', fontSize: '14px', lineHeight: '1.2', color: '#fff' }}>
+                      Explore and discover<br />facts about the world.
+                    </p>
+                  </div>
+                </motion.div>
+                
+                {/* Card 2 */}
+                <motion.div
+                  variants={overlappingCardVariants}
+                  whileHover={{ scale: 1.05 }}
+                  style={{ display: 'flex', alignItems: 'flex-start' }}
+                >
+                  <div style={{
+                    width: '50px',
+                    height: '50px',
+                    borderRadius: '50%',
+                    backgroundColor: 'white',
+                    padding: '6px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginRight: '12px'
+                  }}>
+                    <FaAward size={24} color="#f6ca5f" />
+                  </div>
+                  <div style={{ textAlign: 'left' }}>
+                    <h4 style={{ margin: '0', fontSize: '18px', color: '#fff' }}>earn badges</h4>
+                    <p style={{ margin: '4px 0 0 0', fontSize: '14px', lineHeight: '1.2', color: '#fff' }}>
+                      Collect badges as you<br />master country trivia.
+                    </p>
+                  </div>
+                </motion.div>
+                
+                {/* Card 3 */}
+                <motion.div
+                  variants={overlappingCardVariants}
+                  whileHover={{ scale: 1.05 }}
+                  style={{ display: 'flex', alignItems: 'flex-start' }}
+                >
+                  <div style={{
+                    width: '50px',
+                    height: '50px',
+                    borderRadius: '50%',
+                    backgroundColor: 'white',
+                    padding: '6px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginRight: '12px'
+                  }}>
+                    <FaUserFriends size={24} color="#f6ca5f" />
+                  </div>
+                  <div style={{ textAlign: 'left' }}>
+                    <h4 style={{ margin: '0', fontSize: '18px', color: '#fff' }}>challenge your freinds</h4>
+                    <p style={{ margin: '4px 0 0 0', fontSize: '14px', lineHeight: '1.2', color: '#fff' }}>
+                      Invite friends to play and<br />compare high scores.
+                    </p>
+                  </div>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
