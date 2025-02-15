@@ -1,15 +1,15 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, useViewportScroll, useTransform } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 // import { FaMapMarkerAlt, FaCompass, FaGlobeAmericas } from 'react-icons/fa';
 import charImage from '../assets/char.png';
 import cloudImage from '../assets/cloud.png';
 import worldImage from '../assets/world.png';
 import storesImage from '../assets/stores.png';
-import medalImage from '../assets/medal.png';
-import logsImage from '../assets/logs.png';
 import phoneImage from '../assets/phone.png';
 import { FaGlobeAmericas, FaAward, FaUserFriends } from 'react-icons/fa';
+import HomeMobile from './HomeMobile'; // New import for mobile
 
 function Home() {
   const navigate = useNavigate();
@@ -23,11 +23,18 @@ function Home() {
   const OVERLAP_HEIGHT = 400;
   const EXTRA_GREEN = 100; // extra green background extension at the bottom
 
-  // Compute scale based on window width so the entire layout (our "picture") scales together.
+  // Mobile-specific constants and states are handled in HomeMobile.jsx.
+  
+  // Existing scale state for desktop scaling
   const [scale, setScale] = useState(window.innerWidth / BASE_WIDTH);
+  // New mobile state: isMobile true if screen width is 480px or less
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
+
+  // Update the resize handler (removed mobile-specific logic)
   useEffect(() => {
     const handleResize = () => {
       setScale(window.innerWidth / BASE_WIDTH);
+      setIsMobile(window.innerWidth <= 480);
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -90,6 +97,12 @@ function Home() {
         <span>{text}</span>
       </div>
     );
+  };
+
+  // Add prop validation for WhiteCard
+  WhiteCard.propTypes = {
+    icon: PropTypes.node.isRequired,
+    text: PropTypes.string.isRequired,
   };
 
   // Nav button style now uses a fixed font size in pixels.
@@ -220,25 +233,38 @@ function Home() {
   // --- End New Variants ---
 
   // Insert New: Green Section Variants
-  const greenContainerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.3,  // time between each child animating
-        delayChildren: 0.2,    // delay before the first child animates
-      },
-    },
-  };
+  // const greenContainerVariants = {
+  //   hidden: { opacity: 0 },
+  //   visible: {
+  //     opacity: 1,
+  //     transition: {
+  //       staggerChildren: 0.3,  // time between each child animating
+  //       delayChildren: 0.2,    // delay before the first child animates
+  //     },
+  //   },
+  // };
 
-  const greenItemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-  };
-  // --- End Green Section Variants ---
+  // const greenItemVariants = {
+  //   hidden: { opacity: 0, y: 20 },
+  //   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  // };
+  // // --- End Green Section Variants ---
+
+  // // Mobile-specific style overrides:
+  // const contentContainerStyleMobile = {
+  //   display: 'flex',
+  //   flexDirection: 'column',
+  //   alignItems: 'center',
+  //   gap: '20px',
+  //   marginTop: '20px',
+  // };
+
+  // Render mobile version on small screens
+  if (isMobile) {
+    return <HomeMobile />;
+  }
 
   return (
-    // Outer wrapper to center the scaled design
     <div style={{ overflow: 'hidden', display: 'flex', justifyContent: 'center' }}>
       {/* This wrapper's dimensions match the scaled design */}
       <div
@@ -350,19 +376,34 @@ function Home() {
                         alt="Cloud"
                         style={{
                           position: 'absolute',
-                          top: '160px',    // 20% of 800px
-                          right: '-10px', // roughly 10% of BASE_WIDTH
-                          width: '230px',  // fixed width in pixels
+                            top: '160px',
+                            right: '-10px',
+                            width: '230px',
                           zIndex: 0,
-                          y: cloudY,      // apply the parallax vertical movement
+                            y: cloudY,
                         }}
                       />
                       <img
                         src={charImage}
                         alt="Character"
-                        style={{ ...imageStyle, position: 'relative', zIndex: 1, right: '-100px' }}
-                      />
-                    </div>
+                          style={
+                            isMobile
+                              ? {
+                                  ...imageStyle,
+                                  position: 'relative',
+                                  zIndex: 1,
+                                  left: '50%',
+                                  transform: 'translateX(-50%)'
+                                }
+                              : {
+                                  ...imageStyle,
+                                  position: 'relative',
+                                  zIndex: 1,
+                                  right: '-100px'
+                                }
+                          }
+                        />
+                      </div>
                   </div>
                 </div>
               </motion.div>
@@ -444,9 +485,25 @@ function Home() {
           </div>
 
           {/* Overlapping Sections Wrapper */}
-          <div style={overlappingSectionWrapperStyle}>
+          <div style={
+            isMobile 
+              ? { 
+                  position: 'relative', 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  width: '100%', 
+                  alignItems: 'center', 
+                  padding: '20px', 
+                  marginTop: '20px' 
+                }
+              : overlappingSectionWrapperStyle
+          }>
             {/* Left Overlapping Section: World image and play on mobile */}
-            <motion.div style={{ ...leftOverlappingSectionStyle, y: leftParallax }}>
+            <motion.div style={
+              isMobile 
+                ? { width: '100%', marginBottom: '20px', y: leftParallax }
+                : { ...leftOverlappingSectionStyle, y: leftParallax }
+            }>
               <motion.img 
                 src={worldImage} 
                 alt="World" 
@@ -463,20 +520,35 @@ function Home() {
             </motion.div>
 
             {/* Right Overlapping Section: 3 stacked cards */}
-            <motion.div style={{ ...rightOverlappingSectionStyle, y: rightParallax }}>
+            <motion.div style={
+              isMobile 
+                ? { width: '100%', marginTop: '20px', y: rightParallax }
+                : { ...rightOverlappingSectionStyle, y: rightParallax }
+            }>
               <motion.div
                 variants={overlappingCardContainerVariants}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, amount: 0.2 }}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '10px',
-                  height: '100%',
-                  justifyContent: 'center',
-                  paddingLeft: '50px',  // shift cards to the right
-                }}
+                style={
+                  isMobile 
+                    ? { 
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '10px',
+                        width: '100%',
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                      }
+                    : {
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '10px',
+                        height: '100%',
+                        justifyContent: 'center',
+                        paddingLeft: '50px'
+                      }
+                }
               >
                 {/* Card 1 */}
                 <motion.div
