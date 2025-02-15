@@ -105,19 +105,25 @@ function Home() {
     text: PropTypes.string.isRequired,
   };
 
-  // Nav button style now uses a fixed font size in pixels.
+  // Navigation button style function
   const navButtonStyle = (path) => ({
-    background: 'none',
+    backgroundColor: 'transparent',
     border: 'none',
+    outline: 'none',
+    WebkitTapHighlightColor: 'transparent',
+    color: 'white',
+    opacity: location.pathname === path ? 1 : 0.7,
+    padding: '10px 20px',
+    cursor: 'pointer',
     fontFamily: 'Quicksand',
     fontWeight: '800',
-    fontSize: '12px', // fixed pixel value
-    color: 'white',
-    opacity: location.pathname === path ? 1 : 0.75,
-    cursor: 'pointer',
+    fontSize: '16px',
+    '&:focus': {
+      outline: 'none',
+    },
   });
 
-  // Download button style updated to use pixels.
+  // Download button style
   const downloadButtonStyle = {
     backgroundColor: 'white',
     color: '#f6ca5f',
@@ -125,6 +131,7 @@ function Home() {
     boxShadow: '0px 4px 0px rgba(211, 211, 211, 1)',
     padding: '12px 16px',
     border: 'none',
+    outline: 'none',
     cursor: 'pointer',
     fontFamily: 'Quicksand',
     fontWeight: '800',

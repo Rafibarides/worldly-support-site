@@ -3,6 +3,10 @@ import PropTypes from 'prop-types';
 import { motion, useViewportScroll, useTransform } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { FaGlobeAmericas, FaAward, FaUserFriends } from 'react-icons/fa';
+import Wave from 'react-wavify';
+
+// Verify the import is working
+console.log('Wave component:', Wave);
 
 // Assets
 import charImage from '../assets/char.png';
@@ -95,7 +99,9 @@ function HomeMobile() {
 
   // Outer container (mobile full-screen wrapper)
   const containerStyle = { 
-    overflowY: 'auto', 
+    overflowY: 'auto',
+    overflowX: 'hidden', // prevent horizontal scroll
+    width: '100vw',      // span full viewport width
     display: 'flex', 
     justifyContent: 'center', 
     alignItems: 'center', 
@@ -122,11 +128,13 @@ function HomeMobile() {
 
   // Hamburger Menu styles
   const hamburgerButtonStyle = {
-    background: 'none',
+    backgroundColor: 'transparent',
     border: 'none',
-    fontSize: '40px',
+    outline: 'none',
     color: 'white',
+    fontSize: '24px',
     cursor: 'pointer',
+    padding: '10px',
   };
 
   const mobileMenuStyle = {
@@ -141,14 +149,19 @@ function HomeMobile() {
   };
 
   const navButtonMobileStyle = {
-    background: 'none',
+    backgroundColor: 'transparent',
     border: 'none',
+    outline: 'none',
+    WebkitTapHighlightColor: 'transparent',
+    color: 'white',
+    padding: '10px 20px',
+    cursor: 'pointer',
     fontFamily: 'Quicksand',
     fontWeight: '800',
     fontSize: '16px',
-    color: 'white',
-    padding: '10px 0',
-    cursor: 'pointer',
+    '&:focus': {
+      outline: 'none',
+    },
   };
 
   // Mobile download button styling
@@ -159,6 +172,7 @@ function HomeMobile() {
     boxShadow: '0px 4px 0px rgba(211, 211, 211, 1)',
     padding: '16px 20px',
     border: 'none',
+    outline: 'none',
     cursor: 'pointer',
     fontFamily: 'Quicksand',
     fontWeight: '800',
@@ -285,36 +299,70 @@ function HomeMobile() {
             </div>
           </div>
 
-          {/* Mobile White Section */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
-            style={{
-              backgroundColor: 'white',
-              padding: '40px',
-              marginTop: '0',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: '30px',
-            }}
-          >
-            {whiteCards.map((card, index) => (
-              <motion.div
-                key={card.id}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                style={{ transform: 'scale(1.3)' }}
-              >
-                <WhiteCard icon={card.icon} text={card.text} />
-              </motion.div>
-            ))}
-          </motion.div>
+          {/* Mobile Yellow Section with Wave Edges */}
+          <div style={{ position: 'relative', width: '100%', overflow: 'hidden'}}>
+            {/* Top Wave (flipped) */}
+            <div style={{ position: 'absolute', top: '-30px', left: 0, width: '100%', zIndex: 2 }}>
+              <Wave
+                fill="#7ebd64"
+                options={{
+                  height: 50,
+                  amplitude: 40,
+                  speed: 0.3,
+                  points: 4
+                }}
+                style={{ transform: 'scaleY(-1)', display: 'block', marginBottom: '-2px' }}
+              />
+            </div>
+
+            {/* Yellow Section Content */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              style={{
+                backgroundColor: '#fcc257',
+                padding: '80px 40px',
+                paddingTop: '120px',
+                paddingBottom: '120px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '30px',
+                position: 'relative',
+                zIndex: 1,
+              }}
+            >
+              {whiteCards.map((card, index) => (
+                <motion.div
+                  key={card.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  style={{ transform: 'scale(1.3)' }}
+                >
+                  <WhiteCard icon={card.icon} text={card.text} />
+                </motion.div>
+              ))}
+            </motion.div>
+
+            {/* Bottom Wave */}
+            <div style={{ position: 'absolute', bottom: '-30px', left: 0, width: '100%', zIndex: 2 }}>
+              <Wave
+                fill="#7ebd64"
+                options={{
+                  height: 50,
+                  amplitude: 40,
+                  speed: 0.3,
+                  points: 4
+                }}
+                style={{ display: 'block'}}
+              />
+            </div>
+          </div>
 
           {/* Mobile Overlapping Sections */}
           <div
@@ -329,13 +377,22 @@ function HomeMobile() {
             }}
           >
             {/* Left Overlapping Section */}
-            <motion.div style={{ width: '100%', marginBottom: '20px', y: leftParallax }}>
+            <motion.div
+              style={{
+                width: '100%',
+                marginBottom: '20px',
+                y: leftParallax,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
               <motion.img
                 src={worldImage}
                 alt="World"
                 style={{ width: '200px', marginBottom: '8px', rotate: worldRotation }}
               />
-              <p style={{ fontSize: '12px', color: '#333', margin: 0, fontWeight: 'bold' }}>
+              <p style={{ fontSize: '12px', color: '#333', margin: 0, fontWeight: 'bold', textAlign: 'center' }}>
                 Play on mobile
               </p>
               <img
@@ -346,7 +403,7 @@ function HomeMobile() {
             </motion.div>
 
             {/* Right Overlapping Section */}
-            <motion.div style={{ width: '100%', marginTop: '20px', y: rightParallax }}>
+            <motion.div style={{ width: '100%', marginTop: '20px', marginBottom: '40px', y: rightParallax }}>
               <motion.div
                 variants={overlappingCardContainerVariants}
                 initial="hidden"
@@ -364,7 +421,13 @@ function HomeMobile() {
                 <motion.div
                   variants={overlappingCardVariants}
                   whileHover={{ scale: 1.05 }}
-                  style={{ display: 'flex', alignItems: 'flex-start' }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    width: '300px',
+                    justifyContent: 'flex-start',
+                    margin: '0 auto',
+                  }}
                 >
                   <div
                     style={{
@@ -392,7 +455,13 @@ function HomeMobile() {
                 <motion.div
                   variants={overlappingCardVariants}
                   whileHover={{ scale: 1.05 }}
-                  style={{ display: 'flex', alignItems: 'flex-start' }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    width: '300px',
+                    justifyContent: 'flex-start',
+                    margin: '0 auto',
+                  }}
                 >
                   <div
                     style={{
@@ -420,7 +489,14 @@ function HomeMobile() {
                 <motion.div
                   variants={overlappingCardVariants}
                   whileHover={{ scale: 1.05 }}
-                  style={{ display: 'flex', alignItems: 'flex-start' }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    width: '300px',
+                    justifyContent: 'flex-start',
+                    margin: '0 auto',
+                    marginBottom: '40px',
+                  }}
                 >
                   <div
                     style={{
@@ -437,7 +513,7 @@ function HomeMobile() {
                   >
                     <FaUserFriends size={24} color="#f6ca5f" />
                   </div>
-                  <div style={{ textAlign: 'left' }}>
+                  <div style={{ textAlign: 'left'}}>
                     <h4 style={{ margin: 0, fontSize: '18px', color: '#fff' }}>challenge your freinds</h4>
                     <p style={{ margin: '4px 0 0 0', fontSize: '14px', lineHeight: '1.2', color: '#fff' }}>
                       Invite friends to play and<br />compare high scores.
