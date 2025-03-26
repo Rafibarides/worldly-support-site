@@ -57,6 +57,7 @@ function Home() {
     { label: 'About', path: '/about' },
     { label: 'Support', path: '/support' },
     { label: 'Privacy Policy', path: '/privacy-policy' },
+    { label: 'Terms of Use', path: '/terms-of-use' },
   ];
 
   // White cards data for the dynamic grid
