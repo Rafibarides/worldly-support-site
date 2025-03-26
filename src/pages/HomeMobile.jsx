@@ -48,7 +48,6 @@ function HomeMobile() {
     { label: 'About', path: '/about' },
     { label: 'Support', path: '/support' },
     { label: 'Privacy Policy', path: '/privacy-policy' },
-    { label: 'Terms of Use', path: '/terms-of-use' },
   ];
 
   // Data and component for cards in the white section
