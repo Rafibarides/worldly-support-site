@@ -267,6 +267,11 @@ function Home() {
   //   marginTop: '20px',
   // };
 
+  // Add function to handle download button click
+  const handleDownloadClick = () => {
+    window.open('https://apps.apple.com/app/play-worldly/id6743803487', '_blank');
+  };
+
   // Render mobile version on small screens
   if (isMobile) {
     return <HomeMobile />;
@@ -372,6 +377,7 @@ function Home() {
                           boxShadow: '0px 0px 0px rgba(211, 211, 211, 1)', // removes the shadow
                         }}
                         transition={{ type: 'spring', stiffness: 350, damping: 15 }}
+                        onClick={handleDownloadClick}
                       >
                         Download
                       </motion.button>
