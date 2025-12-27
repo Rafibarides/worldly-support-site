@@ -97,6 +97,7 @@ function About() {
   const navItems = [
     { label: 'Home', path: '/' },
     { label: 'About', path: '/about' },
+    { label: 'Who We Are', path: '/who-we-are' },
     { label: 'Support', path: '/support' },
     { label: 'Privacy Policy', path: '/privacy-policy' },
     { label: 'Terms of Use', path: '/terms-of-use' },

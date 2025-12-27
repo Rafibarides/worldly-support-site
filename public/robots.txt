@@ -1,0 +1,12 @@
+# Worldly - Play Worldly Website
+# https://playworldly.com
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://playworldly.com/sitemap.xml
+
+# Crawl-delay (optional, be gentle with the server)
+Crawl-delay: 1
+
